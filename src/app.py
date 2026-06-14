@@ -10,9 +10,10 @@ import streamlit as st
 
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT_DIR / "src" / "data"
 DATASET_CANDIDATES = (
+    DATA_DIR / "master_dataset.csv",
     ROOT_DIR / "data" / "master_dataset.csv",
-    ROOT_DIR / "src" / "data" / "master_dataset.csv",
 )
 DATASET_PATH = next((path for path in DATASET_CANDIDATES if path.exists()), DATASET_CANDIDATES[0])
 REQUIRED_DATA_COLUMNS = {"spx_close", "vix_decimal", "forward_realized_vol"}
@@ -452,7 +453,11 @@ st.title("30-Day Volatility Risk Premium Dashboard")
 
 if not DATASET_PATH.exists():
     candidates = "\n".join(f"- `{path}`" for path in DATASET_CANDIDATES)
-    st.error(f"Master dataset not found. Checked:\n{candidates}")
+    st.error(
+        "Master dataset not found.\n\n"
+        f"Checked:\n{candidates}\n\n"
+        "Run `python -m src.dataloader --build-master-dataset` to regenerate it."
+    )
     st.stop()
 
 try:
